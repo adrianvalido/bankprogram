@@ -13,9 +13,9 @@ public interface AccountDao {
 
     double getBalanceByUserId(long userId) throws AccountNotFoundException;
 
-    Account update(Account account);
+    boolean update(Account account) throws AccountNotFoundException;
 
-    Account create(Account account);
+    /*Account create(Account account);
 
-    void delete(Account account);
+    void delete(Account account) throws AccountNotFoundException;*/
 }

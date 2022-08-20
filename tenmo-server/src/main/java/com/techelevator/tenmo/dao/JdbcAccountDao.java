@@ -46,36 +46,41 @@ public class JdbcAccountDao implements AccountDao {
                 "FROM account WHERE user_id = ?;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
         if (results.next()){
-            mapRowToAccount(results).getBalance();
+            return mapRowToAccount(results).getBalance();
         }
         throw new AccountNotFoundException();
     }
 
     @Override
-    public Account update(Account account) {
+    public boolean update(Account account) throws AccountNotFoundException {
         String sql = "UPDATE account SET user_id = ?, balance = ? " +
                 "WHERE account_id = ?;";
-        try {
-            jdbcTemplate.update(sql, account.getUserId(), account.getBalance(), account.getAccountId());
-        } catch (AccountNotFoundException e) {
-            return null;
+        boolean isSuccessful = false;
+            int status = jdbcTemplate.update(sql, account.getUserId(), account.getBalance(), account.getAccountId());
+            if (status == 1) {
+                isSuccessful = true;
+            } else {
+                throw new AccountNotFoundException();
+            }
+        return isSuccessful;
     }
 
-    @Override
+
+/*    @Override
     public Account create(Account account) {
         return null;
     }
 
     @Override
-    public void delete(Account account) {
+    public void delete(Account account) throws AccountNotFoundException {
 
-    }
+    }*/
 
     private Account mapRowToAccount(SqlRowSet results) {
         Account account = new Account();
-        account.setAccountId(result.getLong("account_id"));
-        account.setUserId(result.getLong("user_id"));
-        account.setBalance(result.getDouble("balance"));
+        account.setAccountId(results.getLong("account_id"));
+        account.setUserId(results.getLong("user_id"));
+        account.setBalance(results.getDouble("balance"));
         return account;
     }
 }
