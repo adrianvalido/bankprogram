@@ -58,9 +58,7 @@ public class JdbcAccountDao implements AccountDao {
         try {
             jdbcTemplate.update(sql, account.getUserId(), account.getBalance(), account.getAccountId());
         } catch (AccountNotFoundException e) {
-
-        }
-        return null;
+            return null;
     }
 
     @Override
@@ -73,7 +71,7 @@ public class JdbcAccountDao implements AccountDao {
 
     }
 
-    private Account mapRowToAccount(SqlRowSet result) {
+    private Account mapRowToAccount(SqlRowSet results) {
         Account account = new Account();
         account.setAccountId(result.getLong("account_id"));
         account.setUserId(result.getLong("user_id"));
