@@ -5,6 +5,7 @@ import com.techelevator.tenmo.model.Account;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class JdbcAccountDao implements AccountDao {
     }
 
     @Override
-    public double getBalanceByUserId(long userId) throws AccountNotFoundException {
+    public BigDecimal getBalanceByUserId(long userId) throws AccountNotFoundException {
         String sql = "SELECT account_id, user_id, balance " +
                 "FROM account WHERE user_id = ?;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
@@ -80,7 +81,7 @@ public class JdbcAccountDao implements AccountDao {
         Account account = new Account();
         account.setAccountId(results.getLong("account_id"));
         account.setUserId(results.getLong("user_id"));
-        account.setBalance(results.getDouble("balance"));
+        account.setBalance(results.getBigDecimal("balance"));
         return account;
     }
 }

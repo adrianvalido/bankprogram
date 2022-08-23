@@ -3,6 +3,7 @@ package com.techelevator.tenmo.dao;
 import com.techelevator.tenmo.exceptions.AccountNotFoundException;
 import com.techelevator.tenmo.model.Account;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface AccountDao {
@@ -11,7 +12,7 @@ public interface AccountDao {
 
     Account findByUserId(long userId) throws AccountNotFoundException;
 
-    double getBalanceByUserId(long userId) throws AccountNotFoundException;
+    BigDecimal getBalanceByUserId(long userId) throws AccountNotFoundException;
 
     boolean update(Account account) throws AccountNotFoundException;
 
