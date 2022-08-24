@@ -5,12 +5,14 @@ import com.techelevator.tenmo.model.Account;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class JdbcAccountDao implements AccountDao {
 
     private JdbcTemplate jdbcTemplate;
@@ -59,7 +61,9 @@ public class JdbcAccountDao implements AccountDao {
         String sql = "SELECT account_id, user_id, balance FROM account WHERE user_id = ?;";
         SqlRowSet results;
         results = jdbcTemplate.queryForRowSet(sql, userId);
+        if(results.next()){
         return mapRowToAccount(results);
+        }
         /*try {
             results = jdbcTemplate.queryForRowSet(sql, userId);
             if (results.next()) {
@@ -69,6 +73,7 @@ public class JdbcAccountDao implements AccountDao {
             throw new AccountNotFoundException();
         }
         return null;*/
+        return null;
     }
 
 
