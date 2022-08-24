@@ -12,7 +12,7 @@ public interface AccountDao {
 
     Account findByUserId(long userId) throws AccountNotFoundException;
 
-    BigDecimal getBalanceByUserId(long userId) throws AccountNotFoundException;
+    Account getBalanceByUserId(long userId) throws AccountNotFoundException;
 
     BigDecimal addToBalance(BigDecimal amountAdded, long id) throws AccountNotFoundException;
 
