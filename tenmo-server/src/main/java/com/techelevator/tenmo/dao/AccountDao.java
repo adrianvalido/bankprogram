@@ -14,7 +14,11 @@ public interface AccountDao {
 
     BigDecimal getBalanceByUserId(long userId) throws AccountNotFoundException;
 
-    boolean update(Account account) throws AccountNotFoundException;
+    BigDecimal addToBalance(BigDecimal amountAdded, long id) throws AccountNotFoundException;
+
+    BigDecimal subtractFromBalance(BigDecimal amountSubtracted, long id) throws AccountNotFoundException;
+
+   /* boolean update(Account account) throws AccountNotFoundException;*/
 
     /*Account create(Account account);
 

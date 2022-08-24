@@ -2,6 +2,7 @@ package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.exceptions.AccountNotFoundException;
 import com.techelevator.tenmo.model.Account;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
@@ -41,7 +42,7 @@ public class JdbcAccountDao implements AccountDao {
         throw new AccountNotFoundException();
     }
 
-    @Override
+ /*   @Override
     public BigDecimal getBalanceByUserId(long userId) throws AccountNotFoundException {
         String sql = "SELECT account_id, user_id, balance " +
                 "FROM account WHERE user_id = ?;";
@@ -50,11 +51,28 @@ public class JdbcAccountDao implements AccountDao {
             return mapRowToAccount(results).getBalance();
         }
         throw new AccountNotFoundException();
-    }
+    }*/
 
     @Override
-    public boolean update(Account account) throws AccountNotFoundException {
-        String sql = "UPDATE account SET user_id = ?, balance = ? " +
+    public BigDecimal getBalanceByUserId(long userId) throws AccountNotFoundException{
+        String sql = "SELECT balance FROM account WHERE user_id = ?";
+        SqlRowSet results = null;
+        BigDecimal balance = null;
+        try {
+            results = jdbcTemplate.queryForRowSet(sql, userId);
+            if (results.next()) {
+                balance = results.getBigDecimal("balance");
+            }
+        } catch (Exception e) {
+            throw new AccountNotFoundException();
+        }
+        return balance;
+    }
+
+
+  /*  @Override
+    *//*public boolean update(Account account) throws AccountNotFoundException {
+        String sql = "UPDATE account SET balance = ? " +
                 "WHERE account_id = ?;";
         boolean isSuccessful = false;
             int status = jdbcTemplate.update(sql, account.getUserId(), account.getBalance(), account.getAccountId());
@@ -64,7 +82,22 @@ public class JdbcAccountDao implements AccountDao {
                 throw new AccountNotFoundException();
             }
         return isSuccessful;
+    }*/
+    @Override
+    public BigDecimal addToBalance(BigDecimal amountAdded, long id) throws AccountNotFoundException {
+        Account account = findByUserId(id);
+        String sqlString = "UPDATE account SET balance = ? WHERE user_id = ?";
+        jdbcTemplate.update(sqlString, account.getBalance().add(amountAdded) , id);
+        return account.getBalance();
     }
+    @Override
+    public BigDecimal subtractFromBalance(BigDecimal amountSubtracted, long id) throws AccountNotFoundException {
+        Account account = findByUserId(id);
+        String sqlString = "UPDATE accounts SET balance = ? WHERE user_id = ?";
+        jdbcTemplate.update(sqlString, account.getBalance().subtract(amountSubtracted) , id);
+        return account.getBalance();
+    }
+
 
 
 /*    @Override
