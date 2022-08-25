@@ -2,17 +2,19 @@ package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.exceptions.AccountNotFoundException;
 import com.techelevator.tenmo.model.Account;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.List;
 
 public interface AccountDao {
 
     List<Account> findAll();
 
-    Account findByUserId(long userId) throws AccountNotFoundException;
+    Long getCurrentUserId(Principal principal) throws AccountNotFoundException;
 
-    Account getBalanceByUserId(long userId) throws AccountNotFoundException;
+    Account getBalanceByUserId(Long userId) throws AccountNotFoundException;
 
     BigDecimal addToBalance(BigDecimal amountAdded, long id) throws AccountNotFoundException;
 

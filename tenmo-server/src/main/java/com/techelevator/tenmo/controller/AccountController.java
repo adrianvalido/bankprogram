@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.net.http.HttpResponse;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/account")
@@ -23,10 +24,12 @@ public class AccountController {
     @Autowired
     private AccountDao dao;
 
-    @RequestMapping(path = "/balance/{userId}", method = RequestMethod.GET)
-    public Account get(@PathVariable long userId) throws AccountNotFoundException {
+    @RequestMapping(path = "/balance", method = RequestMethod.GET)
+    public Account get(Principal principal) throws AccountNotFoundException {
 /*        if (dao.findByUserId(userId).getAccountId() > 0) {*/
-            return dao.getBalanceByUserId(userId);
+       Long userId = dao.getCurrentUserId(principal);
+        return dao.getBalanceByUserId(userId);
+
 /*
         } else {
             throw new AccountNotFoundException();

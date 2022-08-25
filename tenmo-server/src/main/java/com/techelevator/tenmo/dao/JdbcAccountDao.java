@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,12 +36,11 @@ public class JdbcAccountDao implements AccountDao {
     }
 
     @Override
-    public Account findByUserId(long userId) throws AccountNotFoundException {
-        String sql = "SELECT account_id, user_id, balance " +
-                "FROM account WHERE user_id = ?;";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
+    public Long getCurrentUserId(Principal principal) throws AccountNotFoundException {
+        String sql = "SELECT user_id, username, password_hash FROM tenmo_user WHERE username = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, principal.getName());
         if (results.next()){
-            return mapRowToAccount(results);
+            return mapRowToAccount(results).getUserId();
         }
         throw new AccountNotFoundException();
     }
@@ -57,7 +57,7 @@ public class JdbcAccountDao implements AccountDao {
     }*/
 
     @Override
-    public Account getBalanceByUserId(long userId) throws AccountNotFoundException{
+    public Account getBalanceByUserId(Long userId) throws AccountNotFoundException{
         String sql = "SELECT account_id, user_id, balance FROM account WHERE user_id = ?;";
         SqlRowSet results;
         results = jdbcTemplate.queryForRowSet(sql, userId);
@@ -92,14 +92,14 @@ public class JdbcAccountDao implements AccountDao {
     }*/
     @Override
     public BigDecimal addToBalance(BigDecimal amountAdded, long id) throws AccountNotFoundException {
-        Account account = findByUserId(id);
+        Account account = getBalanceByUserId(id);
         String sqlString = "UPDATE account SET balance = ? WHERE user_id = ?";
         jdbcTemplate.update(sqlString, account.getBalance().add(amountAdded) , id);
         return account.getBalance();
     }
     @Override
     public BigDecimal subtractFromBalance(BigDecimal amountSubtracted, long id) throws AccountNotFoundException {
-        Account account = findByUserId(id);
+        Account account = getBalanceByUserId(id);
         String sqlString = "UPDATE accounts SET balance = ? WHERE user_id = ?";
         jdbcTemplate.update(sqlString, account.getBalance().subtract(amountSubtracted) , id);
         return account.getBalance();
