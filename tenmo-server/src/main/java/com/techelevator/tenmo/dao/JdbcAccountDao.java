@@ -37,7 +37,9 @@ public class JdbcAccountDao implements AccountDao {
 
     @Override
     public Long getCurrentUserId(Principal principal) throws AccountNotFoundException {
-        String sql = "SELECT user_id, username, password_hash FROM tenmo_user WHERE username = ?;";
+        String sql = "SELECT  a.account_id, tu.user_id FROM account a " +
+                "JOIN tenmo_user tu ON a.user_id = tu.user_id " +
+                "WHERE tu.username = ?;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, principal.getName());
         if (results.next()){
             return mapRowToAccount(results).getUserId();

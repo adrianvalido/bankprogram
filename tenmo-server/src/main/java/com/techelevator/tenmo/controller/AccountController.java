@@ -19,7 +19,7 @@ import java.security.Principal;
 
 @RestController
 @RequestMapping("/account")
-@PreAuthorize("isAuthenticated()")
+//@PreAuthorize("isAuthenticated()")
 public class AccountController {
     @Autowired
     private AccountDao dao;
