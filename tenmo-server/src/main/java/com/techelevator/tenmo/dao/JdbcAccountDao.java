@@ -38,7 +38,7 @@ public class JdbcAccountDao implements AccountDao {
     @Override
     public Long getCurrentUserId(Principal principal) throws AccountNotFoundException {
         String sql = "SELECT account_id, account.user_id, balance FROM account " +
-                "JOIN tenmo_user ON tenmo_user.user_id = account.user_id " +
+                "JOIN tenmo_user using(user_id) " +
                 "WHERE tenmo_user.username = ?;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, principal.getName());
         if (results.next()){

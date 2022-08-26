@@ -8,8 +8,20 @@ import java.util.List;
 
 public interface TransferDao {
     public List<Transfer> getAllTransfers();
+
+    public List<Transfer> getAllTransfersByAccountFrom(long accountFrom);
+
+    public List<Transfer> getAllTransfersByAccountTo(long accountTo);
+
+    public List<Transfer> getTransfersByAmount(BigDecimal amount);
+
     public Transfer getTransferById(long transferId);
+
     public Transfer sendBucks(Principal principal, long userTo, BigDecimal amountSent);
+
+    public List<Transfer> getAllTransfersByType(long transferTypeId);
+
+    public List<Transfer> getAllTransfersByStatus(long transferStatusId);
 
 
 }

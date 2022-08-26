@@ -14,7 +14,7 @@ public class BasicLogger {
 	public static void log(String message) {
 		try {
 			if (pw == null) {
-//				String logFilename = System.getProperty("user.dir") + "/logs" + LocalDate.now().format(DateTimeFormatter.ISO_DATE) + ".log";
+//				String logFilename = System.getProperty("user.dir") + "/logs/" + LocalDate.now().format(DateTimeFormatter.ISO_DATE) + ".log";
 				String logFilename = "logs/" + LocalDate.now().format(DateTimeFormatter.ISO_DATE) + ".log";
 				pw = new PrintWriter(new FileOutputStream(logFilename, true));
 			}
