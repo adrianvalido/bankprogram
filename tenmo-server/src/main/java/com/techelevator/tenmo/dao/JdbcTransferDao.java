@@ -1,22 +1,23 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.exceptions.AccountNotFoundException;
 import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-
+import com.techelevator.tenmo.dao.JdbcAccountDao;
 @Component
 public class JdbcTransferDao implements TransferDao {
 
     private JdbcTemplate jdbcTemplate;
 
     public JdbcTransferDao(JdbcTemplate jdbcTemplate) { this.jdbcTemplate = jdbcTemplate; }
+
 
     @Override
     public List<Transfer> getAllTransfers() {
@@ -92,9 +93,21 @@ public class JdbcTransferDao implements TransferDao {
     }
 
     @Override
-    public Transfer sendBucks(Principal principal, long userTo, BigDecimal amountSent) {
-        return null;
+    public Transfer sendBucks(Principal principal, BigDecimal amountSent, long userTo) throws AccountNotFoundException {
+        JdbcAccountDao jdbcAccountDao = new JdbcAccountDao();
+        long currentUserId = jdbcAccountDao.getCurrentUserId(principal);
+        String withdrawSql = "Update account set balance = balance - ? " +
+                "WHERE user_id = ?;";
+        String depositSql = "Update account set balance = balance + ? " +
+                "WHERE user_id = ?;";
+        SqlRowSet withdrawResults = jdbcTemplate.update(withdrawSql, amountSent ,currentUserId);
+        SqlRowSet depositResults = jdbcTemplate.update(depositSql, amountSent ,userTo);
+
+        BigDecimal newPrincipalBalance = jdbcAccountDao.getBalanceByUserId(currentUserId).getBalance().subtract(amountSent);
+        BigDecimal newUserToBalance = jdbcAccountDao.getBalanceByUserId(userTo).getBalance().add(amountSent);
+
     }
+    //TODO consider creating two methods for sending and receiving ^
 
     @Override
     public List<Transfer> getAllTransfersByType(long transferTypeId) {

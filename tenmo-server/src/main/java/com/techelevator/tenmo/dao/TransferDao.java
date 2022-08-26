@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.exceptions.AccountNotFoundException;
 import com.techelevator.tenmo.model.Transfer;
 
 import java.math.BigDecimal;
@@ -17,7 +18,7 @@ public interface TransferDao {
 
     public Transfer getTransferById(long transferId);
 
-    public Transfer sendBucks(Principal principal, long userTo, BigDecimal amountSent);
+    public Transfer sendBucks(Principal principal, long userTo, BigDecimal amountSent) throws AccountNotFoundException;
 
     public List<Transfer> getAllTransfersByType(long transferTypeId);
 

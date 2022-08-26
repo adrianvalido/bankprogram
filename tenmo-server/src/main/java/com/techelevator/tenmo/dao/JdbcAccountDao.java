@@ -22,6 +22,8 @@ public class JdbcAccountDao implements AccountDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public  JdbcAccountDao(){}
+
 
     @Override
     public List<Account> findAll() {
