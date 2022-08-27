@@ -93,21 +93,48 @@ public class JdbcTransferDao implements TransferDao {
     }
 
     @Override
-    public Transfer sendBucks(Principal principal, BigDecimal amountSent, long userTo) throws AccountNotFoundException {
+    public boolean sendBucks(Transfer transfer) throws AccountNotFoundException {
+//    public Transfer sendBucks(Principal principal, BigDecimal amountSent, long accountTo) throws AccountNotFoundException {
+//        JdbcAccountDao jdbcAccountDao = new JdbcAccountDao();
+//        long currentUserId = jdbcAccountDao.getCurrentUserId(principal);
+        String withdrawSql = "UPDATE transfer SET amount = ? " +
+                "WHERE account_from = ?;";
+        int withdrawResults = jdbcTemplate.update(withdrawSql, transfer.getAmount(), transfer.getAccountFrom());
+        if (withdrawResults != 1) {
+            transfer.setTransferStatusId(3);
+            return false;
+        }
+//        BigDecimal newPrincipalBalance = jdbcAccountDao.getBalanceByUserId(currentUserId).getBalance().subtract(amountSent);
+//        BigDecimal newUserToBalance = jdbcAccountDao.getBalanceByUserId(userTo).getBalance().add(amountSent);
+        String depositSql = "UPDATE account SET amount = ? " +
+                "WHERE account_to = ?;";
+        int depositResults = jdbcTemplate.update(depositSql,transfer.getAmount(), transfer.getAccountTo());
+        if (depositResults != 1) {
+            transfer.setTransferStatusId(3);
+            return false;
+        }
+        transfer.setTransferStatusId(2);
+        return true;
+    }
+
+    @Override
+    public Transfer createTransfer(Principal principal, BigDecimal amount, long accountTo) throws AccountNotFoundException {
         JdbcAccountDao jdbcAccountDao = new JdbcAccountDao();
         long currentUserId = jdbcAccountDao.getCurrentUserId(principal);
-        String withdrawSql = "Update account set balance = balance - ? " +
-                "WHERE user_id = ?;";
-        String depositSql = "Update account set balance = balance + ? " +
-                "WHERE user_id = ?;";
-        SqlRowSet withdrawResults = jdbcTemplate.update(withdrawSql, amountSent ,currentUserId);
-        SqlRowSet depositResults = jdbcTemplate.update(depositSql, amountSent ,userTo);
+        String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, " +
+                "account_from, account_to, amount) VALUES (2, 1, ?, ?, ?) returning transfer_id;";
+        long tranId = jdbcTemplate.queryForObject(sql, Long.class, currentUserId, accountTo, amount);
 
-        BigDecimal newPrincipalBalance = jdbcAccountDao.getBalanceByUserId(currentUserId).getBalance().subtract(amountSent);
-        BigDecimal newUserToBalance = jdbcAccountDao.getBalanceByUserId(userTo).getBalance().add(amountSent);
-
+        String sqlMap = "SELECT transfer_id, transfer_type_id, transfer_status_id, " +
+                "account_from, account_to, amount " +
+                "FROM transfer " +
+                "WHERE transfer_id = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sqlMap, tranId);
+        if (results.next()) {
+            return mapRowToTransfer(results);
+        }
+        return null;
     }
-    //TODO consider creating two methods for sending and receiving ^
 
     @Override
     public List<Transfer> getAllTransfersByType(long transferTypeId) {
