@@ -16,20 +16,21 @@ public class JdbcTransferDao implements TransferDao {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
+    @Autowired
+    private AccountDao dao;
     public JdbcTransferDao(JdbcTemplate jdbcTemplate) { this.jdbcTemplate = jdbcTemplate; }
 
 
     @Override
     public List<Transfer> getAllTransfers(Principal principal) throws AccountNotFoundException {
-        JdbcAccountDao jdbcAccountDao = new JdbcAccountDao();
-        long currentId = jdbcAccountDao.getBalanceByUserId(jdbcAccountDao.getCurrentUserId(principal)).getAccountId();
+
+        long currentAccountId = dao.getBalanceByUserId(dao.getCurrentUserId(principal)).getAccountId();
         List<Transfer> transfers = new ArrayList<>();
-        String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id, " +
+        String sql = "SELECT transfer_id, transfer_type_id, transfer_status_id," +
                 "account_from, account_to, amount " +
-                "FROM transfer t" +
-                "WHERE account_from = ? or account_to = ?;";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, currentId, currentId);
+                "FROM transfer t " +
+                "WHERE account_from = ? OR account_to = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, currentAccountId, currentAccountId);
         while(results.next()) {
             Transfer transfer = mapRowToTransfer(results);
             transfers.add(transfer);
@@ -102,8 +103,8 @@ public class JdbcTransferDao implements TransferDao {
 //        JdbcAccountDao jdbcAccountDao = new JdbcAccountDao();
 //        long currentUserId = jdbcAccountDao.getCurrentUserId(principal);
 
-        JdbcAccountDao jdbcAccountDao = new JdbcAccountDao();
-        BigDecimal currentBalance = jdbcAccountDao.getBalanceByUserId(jdbcAccountDao.getCurrentUserId(principal)).getBalance();
+        /*AccountDao dao = new JdbcAccountDao();*/
+        BigDecimal currentBalance = dao.getBalanceByUserId(dao.getCurrentUserId(principal)).getBalance();
         if (currentBalance.doubleValue() < transfer.getAmount() && transfer.getAmount() > 0) {
             String withdrawSql = "UPDATE account SET balance = balance - ? " +
                     "WHERE account_id = ?;";
