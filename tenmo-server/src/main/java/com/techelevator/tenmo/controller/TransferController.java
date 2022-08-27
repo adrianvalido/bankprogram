@@ -23,10 +23,11 @@ public class TransferController {
     private TransferDao dao;
 
     @RequestMapping(path = "/sendbucks", method = RequestMethod.POST)
-    public Transfer createTransfer(Principal principal, BigDecimal amount, long accountTo) throws AccountNotFoundException {
-        Transfer transfer = dao.createTransfer(principal, amount, accountTo);
+    public Transfer sendBucksPost(@RequestBody Transfer transfer) throws AccountNotFoundException {
         dao.sendBucks(transfer);
         return transfer;
     }
+
+
 
 }

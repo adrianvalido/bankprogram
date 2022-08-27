@@ -50,6 +50,12 @@ public class JdbcAccountDao implements AccountDao {
         }
         throw new AccountNotFoundException();
     }
+    @Override
+    public Long getAccountIdByUserId(Long userId) throws AccountNotFoundException{
+        String sql = "SELECT account_id FROM account WHERE user_id = ? returning account_id;";
+        long accountId = jdbcTemplate.queryForObject(sql, Long.class, userId);
+        return accountId;
+    }
 
  /*   @Override
     public BigDecimal getBalanceByUserId(long userId) throws AccountNotFoundException {

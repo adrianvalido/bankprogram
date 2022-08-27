@@ -1,7 +1,6 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.exceptions.AccountNotFoundException;
-import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.Transfer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,7 +10,7 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
-import com.techelevator.tenmo.dao.JdbcAccountDao;
+
 @Component
 public class JdbcTransferDao implements TransferDao {
 
@@ -99,17 +98,19 @@ public class JdbcTransferDao implements TransferDao {
 //    public Transfer sendBucks(Principal principal, BigDecimal amountSent, long accountTo) throws AccountNotFoundException {
 //        JdbcAccountDao jdbcAccountDao = new JdbcAccountDao();
 //        long currentUserId = jdbcAccountDao.getCurrentUserId(principal);
-        String withdrawSql = "UPDATE transfer SET amount = ? " +
-                "WHERE account_from = ?;";
+        String withdrawSql = "UPDATE account SET balance = balance - ? " +
+                "WHERE account_id = ?;";
         int withdrawResults = jdbcTemplate.update(withdrawSql, transfer.getAmount(), transfer.getAccountFrom());
+
+
         if (withdrawResults != 1) {
             transfer.setTransferStatusId(3);
             return false;
         }
 //        BigDecimal newPrincipalBalance = jdbcAccountDao.getBalanceByUserId(currentUserId).getBalance().subtract(amountSent);
 //        BigDecimal newUserToBalance = jdbcAccountDao.getBalanceByUserId(userTo).getBalance().add(amountSent);
-        String depositSql = "UPDATE account SET amount = ? " +
-                "WHERE account_to = ?;";
+        String depositSql = "UPDATE account SET balance = balance + ? " +
+                "WHERE account_id = ?;";
         int depositResults = jdbcTemplate.update(depositSql,transfer.getAmount(), transfer.getAccountTo());
         if (depositResults != 1) {
             transfer.setTransferStatusId(3);
@@ -122,10 +123,10 @@ public class JdbcTransferDao implements TransferDao {
     @Override
     public Transfer createTransfer(Principal principal, BigDecimal amount, long accountTo) throws AccountNotFoundException {
         JdbcAccountDao jdbcAccountDao = new JdbcAccountDao();
-        long currentUserId = jdbcAccountDao.getCurrentUserId(principal);
+        long currentAccountId = jdbcAccountDao.getAccountIdByUserId(jdbcAccountDao.getCurrentUserId(principal));
         String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, " +
                 "account_from, account_to, amount) VALUES (2, 1, ?, ?, ?) returning transfer_id;";
-        long tranId = jdbcTemplate.queryForObject(sql, Long.class, currentUserId, accountTo, amount);
+        long tranId = jdbcTemplate.queryForObject(sql, Long.class, currentAccountId, accountTo, amount);
 
         String sqlMap = "SELECT transfer_id, transfer_type_id, transfer_status_id, " +
                 "account_from, account_to, amount " +
