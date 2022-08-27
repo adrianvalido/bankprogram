@@ -16,6 +16,10 @@ public class Transfer {
     @DecimalMin(value = "0.01", message = "Amount field cannot be 0 or negative.")
     @NotNull(message = "Amount field cannot be null.")
     private double amount;
+    @NotNull(message = "UserIdFrom field cannot be empty")
+    private long userIdFrom;
+    @NotNull(message = "UserIdTo field cannot be empty")
+    private long userIdTo;
 
     public Transfer(long transferId, long accountFrom, long accountTo, double amount) {
         this.transferId = transferId;
@@ -69,5 +73,21 @@ public class Transfer {
 
     public void setTransferStatusId(long transferStatusId) {
         this.transferStatusId = transferStatusId;
+    }
+
+    public long getUserIdFrom() {
+        return userIdFrom;
+    }
+
+    public void setUserIdFrom(long userIdFrom) {
+        this.userIdFrom = userIdFrom;
+    }
+
+    public long getUserIdTo() {
+        return userIdTo;
+    }
+
+    public void setUserIdTo(long userIdTo) {
+        this.userIdTo = userIdTo;
     }
 }

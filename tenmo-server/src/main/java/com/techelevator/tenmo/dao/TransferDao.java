@@ -8,7 +8,7 @@ import java.security.Principal;
 import java.util.List;
 
 public interface TransferDao {
-    public List<Transfer> getAllTransfers();
+    public List<Transfer> getAllTransfers(Principal principal) throws AccountNotFoundException;
 
     public List<Transfer> getAllTransfersByAccountFrom(long accountFrom);
 
@@ -18,7 +18,7 @@ public interface TransferDao {
 
     public Transfer getTransferById(long transferId);
 
-    public boolean sendBucks(Transfer transfer) throws AccountNotFoundException;
+    public boolean sendBucks(Transfer transfer, Principal principal) throws AccountNotFoundException;
 
     public Transfer createTransfer(Principal principal, BigDecimal amount, long accountTo) throws AccountNotFoundException;
 
