@@ -14,15 +14,15 @@ public class App {
 
     private static final String API_BASE_URL = "http://localhost:8080/";
 
-    AccountService accountService;
-    TransferService transferService;
+
 
     private final ConsoleService consoleService = new ConsoleService();
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
 
     private AuthenticatedUser currentUser;
+//    AccountService accountService = new AccountService(API_BASE_URL, currentUser);
+    TransferService transferService = new TransferService(API_BASE_URL, currentUser);
 
-    Principal principal;
 
 
     public static void main(String[] args) throws AccountNotFoundException {
@@ -97,12 +97,13 @@ public class App {
     }
 
 	private void viewCurrentBalance() throws AccountNotFoundException {
-		accountService.viewCurrentBalance(principal);
+        AccountService accountService = new AccountService(API_BASE_URL, currentUser);
+		accountService.viewCurrentBalance();
 		
 	}
 
 	private void viewTransferHistory() throws AccountNotFoundException {
-		transferService.getAllTransfers(principal);
+		transferService.getAllTransfers();
 		
 	}
 
@@ -112,8 +113,8 @@ public class App {
 	}
 
 	private void sendBucks() throws AccountNotFoundException {
-		transferService.sendBucks(transferService.createTransfer(principal, consoleService.promptForBigDecimal("Please enter a decimal amount to send."),
-                consoleService.promptForInt("Please enter the Account Id of the user you want to send to.")), principal);
+		transferService.sendBucks(transferService.createTransfer( consoleService.promptForBigDecimal("Please enter a decimal amount to send."),
+                consoleService.promptForInt("Please enter the Account Id of the user you want to send to.")));
 
 		
 	}
@@ -122,5 +123,4 @@ public class App {
 		// TODO Auto-generated method stub
 		
 	}
-
 }

@@ -106,7 +106,7 @@ public class JdbcTransferDao implements TransferDao {
         BigDecimal currentBalance = dao.getBalanceByUserId(dao.getCurrentUserId(principal)).getBalance();
         BigDecimal zero = BigDecimal.valueOf(0.00);
         if (transfer.getAccountFrom() != transfer.getAccountTo()) {
-            if ((currentBalance.compareTo(transfer.getAmount()) > 0) && transfer.getAmount().compareTo(zero) > 0) {
+            if ((currentBalance.compareTo(transfer.getAmount()) >= 0) && transfer.getAmount().compareTo(zero) > 0) {
                 String withdrawSql = "UPDATE account SET balance = balance - ? " +
                         "WHERE account_id = ?;";
                 int withdrawResults = jdbcTemplate.update(withdrawSql, transfer.getAmount(), transfer.getAccountFrom());
