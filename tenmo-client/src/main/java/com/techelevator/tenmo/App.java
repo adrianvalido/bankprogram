@@ -1,25 +1,37 @@
 package com.techelevator.tenmo;
 
+import com.techelevator.tenmo.exceptions.AccountNotFoundException;
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.UserCredentials;
+import com.techelevator.tenmo.services.AccountService;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
+import com.techelevator.tenmo.services.TransferService;
+
+import java.security.Principal;
 
 public class App {
 
     private static final String API_BASE_URL = "http://localhost:8080/";
+
+    AccountService accountService;
+    TransferService transferService;
 
     private final ConsoleService consoleService = new ConsoleService();
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
 
     private AuthenticatedUser currentUser;
 
-    public static void main(String[] args) {
+    Principal principal;
+
+
+    public static void main(String[] args) throws AccountNotFoundException {
+
         App app = new App();
         app.run();
     }
 
-    private void run() {
+    private void run() throws AccountNotFoundException {
         consoleService.printGreeting();
         loginMenu();
         if (currentUser != null) {
@@ -60,7 +72,7 @@ public class App {
         }
     }
 
-    private void mainMenu() {
+    private void mainMenu() throws AccountNotFoundException {
         int menuSelection = -1;
         while (menuSelection != 0) {
             consoleService.printMainMenu();
@@ -84,13 +96,13 @@ public class App {
         }
     }
 
-	private void viewCurrentBalance() {
-		// TODO Auto-generated method stub
+	private void viewCurrentBalance() throws AccountNotFoundException {
+		accountService.viewCurrentBalance(principal);
 		
 	}
 
-	private void viewTransferHistory() {
-		// TODO Auto-generated method stub
+	private void viewTransferHistory() throws AccountNotFoundException {
+		transferService.getAllTransfers(principal);
 		
 	}
 
@@ -99,8 +111,10 @@ public class App {
 		
 	}
 
-	private void sendBucks() {
-		// TODO Auto-generated method stub
+	private void sendBucks() throws AccountNotFoundException {
+		transferService.sendBucks(transferService.createTransfer(principal, consoleService.promptForBigDecimal("Please enter a decimal amount to send."),
+                consoleService.promptForInt("Please enter the Account Id of the user you want to send to.")), principal);
+
 		
 	}
 

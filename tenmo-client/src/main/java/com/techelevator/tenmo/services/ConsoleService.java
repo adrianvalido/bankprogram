@@ -8,6 +8,9 @@ import java.util.Scanner;
 
 public class ConsoleService {
 
+    private AccountService accountService;
+    private TransferService transferService;
+
     private final Scanner scanner = new Scanner(System.in);
 
     public int promptForMenuSelection(String prompt) {

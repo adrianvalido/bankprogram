@@ -6,10 +6,7 @@ import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.security.Principal;
@@ -26,7 +23,6 @@ public class TransferController {
 
     @RequestMapping(path = "/sendbucks", method = RequestMethod.POST)
     public Transfer sendBucksPost(@RequestBody Transfer transfer, Principal principal) throws AccountNotFoundException {
-
         dao.sendBucks(transfer, principal);
         return transfer;
     }
@@ -34,6 +30,16 @@ public class TransferController {
     @RequestMapping(path = "/alltransfers", method = RequestMethod.GET)
     public List<Transfer> getAllTransfers(Principal principal) throws AccountNotFoundException {
         return dao.getAllTransfers(principal);
+    }
+
+    @RequestMapping(path = "/{transferId}", method = RequestMethod.GET)
+    public Transfer getTransferById(@PathVariable long transferId){
+       return dao.getTransferById(transferId);
+    }
+
+    @RequestMapping(path = "/create", method = RequestMethod.POST)
+    public Transfer createTransfer(Principal principal, BigDecimal amount, long accountTo) throws AccountNotFoundException{
+        return dao.createTransfer(principal,amount,accountTo);
     }
 
 }

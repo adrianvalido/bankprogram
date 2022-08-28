@@ -26,15 +26,9 @@ public class AccountController {
 
     @RequestMapping(path = "/balance", method = RequestMethod.GET)
     public Account get(Principal principal) throws AccountNotFoundException {
-/*        if (dao.findByUserId(userId).getAccountId() > 0) {*/
        Long userId = dao.getCurrentUserId(principal);
         return dao.getBalanceByUserId(userId);
 
-/*
-        } else {
-            throw new AccountNotFoundException();
-        }
-*/
 
     }
 
