@@ -26,6 +26,7 @@ public class TransferController {
 
     @RequestMapping(path = "/sendbucks", method = RequestMethod.POST)
     public Transfer sendBucksPost(@RequestBody Transfer transfer, Principal principal) throws AccountNotFoundException {
+
         dao.sendBucks(transfer, principal);
         return transfer;
     }

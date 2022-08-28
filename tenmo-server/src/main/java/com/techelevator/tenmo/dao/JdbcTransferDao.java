@@ -102,31 +102,30 @@ public class JdbcTransferDao implements TransferDao {
 //    public Transfer sendBucks(Principal principal, BigDecimal amountSent, long accountTo) throws AccountNotFoundException {
 //        JdbcAccountDao jdbcAccountDao = new JdbcAccountDao();
 //        long currentUserId = jdbcAccountDao.getCurrentUserId(principal);
-
         /*AccountDao dao = new JdbcAccountDao();*/
         BigDecimal currentBalance = dao.getBalanceByUserId(dao.getCurrentUserId(principal)).getBalance();
-        if (currentBalance.doubleValue() < transfer.getAmount() && transfer.getAmount() > 0) {
-            String withdrawSql = "UPDATE account SET balance = balance - ? " +
-                    "WHERE account_id = ?;";
-            int withdrawResults = jdbcTemplate.update(withdrawSql, transfer.getAmount(), transfer.getAccountFrom());
 
+        if (transfer.getAccountFrom() != transfer.getAccountTo()) {
+            if (currentBalance.doubleValue() < transfer.getAmount() && transfer.getAmount() > 0) {
+                String withdrawSql = "UPDATE account SET balance = balance - ? " +
+                        "WHERE account_id = ?;";
+                int withdrawResults = jdbcTemplate.update(withdrawSql, transfer.getAmount(), transfer.getAccountFrom());
 
-            if (withdrawResults != 1) {
-                transfer.setTransferStatusId(3);
-                return false;
-            }
+                if (withdrawResults != 1) {
+                    transfer.setTransferStatusId(3);
+                }
 //        BigDecimal newPrincipalBalance = jdbcAccountDao.getBalanceByUserId(currentUserId).getBalance().subtract(amountSent);
 //        BigDecimal newUserToBalance = jdbcAccountDao.getBalanceByUserId(userTo).getBalance().add(amountSent);
-            String depositSql = "UPDATE account SET balance = balance + ? " +
-                    "WHERE account_id = ?;";
-            int depositResults = jdbcTemplate.update(depositSql, transfer.getAmount(), transfer.getAccountTo());
-            if (depositResults != 1) {
-                transfer.setTransferStatusId(3);
-                return false;
+                String depositSql = "UPDATE account SET balance = balance + ? " +
+                        "WHERE account_id = ?;";
+                int depositResults = jdbcTemplate.update(depositSql, transfer.getAmount(), transfer.getAccountTo());
+                if (depositResults != 1) {
+                    transfer.setTransferStatusId(3);
+                }
+                transfer.setTransferStatusId(2);
             }
-            transfer.setTransferStatusId(2);
-            return true;
         }
+        transfer.setTransferStatusId(3);
         return false;
     }
 
@@ -134,26 +133,23 @@ public class JdbcTransferDao implements TransferDao {
     public Transfer createTransfer(Principal principal, BigDecimal amount, long accountTo) throws AccountNotFoundException {
         JdbcAccountDao jdbcAccountDao = new JdbcAccountDao();
         long currentAccountId = jdbcAccountDao.getAccountIdByUserId(jdbcAccountDao.getCurrentUserId(principal));
-        if (accountTo != currentAccountId) {
-            String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, " +
-                    "account_from, account_to, amount) VALUES (2, 2, ?, ?, ?) returning transfer_id;";
-            long tranId = jdbcTemplate.queryForObject(sql, Long.class, currentAccountId, accountTo, amount);
+        String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, " +
+                "account_from, account_to, amount) VALUES (2, 2, ?, ?, ?) returning transfer_id;";
+        long tranId = jdbcTemplate.queryForObject(sql, Long.class, currentAccountId, accountTo, amount);
 
-            String sqlMap = "SELECT transfer_id, transfer_type_id, transfer_status_id, " +
-                    "account_from, account_to, a.user_id as user_id_from, tu.user_id as user_id_to, amount " +
-                    "FROM transfer t " +
-                    "JOIN account a ON t.account_from = a.account_id " +
-                    "JOIN tenmo_user tu using(user_id) " +
-                    "WHERE a.user_id = (SELECT user_id from account where account_id = ?) " +
-                    "AND tu.user_id= (SELECT user_id from account where account_id = ?) " +
-                    "AND transfer_id = ?;";
-            SqlRowSet results = jdbcTemplate.queryForRowSet(sqlMap, currentAccountId, accountTo, tranId);
-            if (results.next()) {
-                return mapRowToCreateTransfer(results);
-            }
-
+        String sqlMap = "SELECT transfer_id, transfer_type_id, transfer_status_id, " +
+                "account_from, account_to, a.user_id as user_id_from, tu.user_id as user_id_to, amount " +
+                "FROM transfer t " +
+                "JOIN account a ON t.account_from = a.account_id " +
+                "JOIN tenmo_user tu using(user_id) " +
+                "WHERE a.user_id = (SELECT user_id from account where account_id = ?) " +
+                "AND tu.user_id= (SELECT user_id from account where account_id = ?) " +
+                "AND transfer_id = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sqlMap, currentAccountId, accountTo, tranId);
+        if (results.next()) {
+             return mapRowToCreateTransfer(results);
         }
-            return null;
+        return null;
     }
 
     @Override
