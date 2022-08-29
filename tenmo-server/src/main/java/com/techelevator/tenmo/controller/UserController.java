@@ -18,8 +18,9 @@ public class UserController {
     private UserDao dao;
 
     @RequestMapping(path = "/findall", method = RequestMethod.GET)
-    public List<String> findAllPrivate() {
-        return dao.findAllPrivate();
+    public List<User> findAllPrivate() {
+        List<User> users = dao.findAllPrivate();
+        return users;
     }
 
     @RequestMapping(path = "/account/{accountId}", method = RequestMethod.GET)

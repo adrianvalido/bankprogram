@@ -21,7 +21,7 @@ public class App {
 
     private AuthenticatedUser currentUser;
 //    AccountService accountService = new AccountService(API_BASE_URL, currentUser);
-    TransferService transferService = new TransferService(API_BASE_URL, currentUser);
+/*    TransferService transferService = new TransferService(API_BASE_URL, currentUser);*/
 
 
 
@@ -103,6 +103,7 @@ public class App {
 	}
 
 	private void viewTransferHistory() throws AccountNotFoundException {
+        TransferService transferService = new TransferService(API_BASE_URL, currentUser);
 		transferService.getAllTransfers();
 		
 	}
@@ -113,6 +114,7 @@ public class App {
 	}
 
 	private void sendBucks() throws AccountNotFoundException {
+        TransferService transferService = new TransferService(API_BASE_URL, currentUser);
         transferService.sendBucks();
 
 		

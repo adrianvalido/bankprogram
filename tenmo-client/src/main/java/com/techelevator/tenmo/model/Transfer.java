@@ -1,23 +1,22 @@
 package com.techelevator.tenmo.model;
 
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public class Transfer {
-    @NotNull(message = "Account To field cannot be empty")
+/*    @NotNull(message = "Account To field cannot be empty")*/
     private long transferId;
-    @NotNull(message = "Account To field cannot be empty")
+/*    @NotNull(message = "Account To field cannot be empty")*/
     private long transferTypeId;
-    @NotNull(message = "Account To field cannot be empty")
+/*    @NotNull(message = "Account To field cannot be empty")*/
     private long transferStatusId;
-    @NotNull(message = "Account To field cannot be empty")
+/*    @NotNull(message = "Account To field cannot be empty")*/
     private long accountFrom;
-    @NotNull(message = "Account To field cannot be empty")
+/*    @NotNull(message = "Account To field cannot be empty")*/
     private long accountTo;
     private BigDecimal amount;
-    @NotNull(message = "Username from field cannot be empty")
+/*    @NotNull(message = "Username from field cannot be empty")*/
     private String userNameFrom;
-    @NotNull(message = "Username to field cannot be empty")
+/*    @NotNull(message = "Username to field cannot be empty")*/
     private String userNameTo;
 
     public Transfer(long transferId, long accountFrom, long accountTo, BigDecimal amount) {

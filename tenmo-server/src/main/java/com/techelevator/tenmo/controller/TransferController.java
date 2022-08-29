@@ -38,8 +38,14 @@ public class TransferController {
     }
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
-    public Transfer createTransfer(Principal principal, BigDecimal amount, long accountTo) throws AccountNotFoundException{
-        return dao.createTransfer(principal,amount,accountTo);
+    /*public Transfer createTransfer(Principal principal, BigDecimal amount, long accountTo) throws AccountNotFoundException{*/
+    public Transfer createTransfer(Principal principal, @RequestBody Transfer transfer) throws AccountNotFoundException{
+        Transfer temp = dao.createTransfer(principal, transfer.getAmount(), transfer.getAccountTo());
+        if (dao.sendBucks(temp, principal)) {
+            return temp;
+        } else {
+            return null;
+        }
     }
 
 

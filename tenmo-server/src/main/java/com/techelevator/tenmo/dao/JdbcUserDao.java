@@ -46,12 +46,13 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public List<String> findAllPrivate() {
-        List<String> users = new ArrayList<>();
-        String sql = "SELECT user_id, username FROM tenmo_user;";
+    public List<User> findAllPrivate() {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT user_id, username, password_hash FROM tenmo_user;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
         while(results.next()) {
-            String user = mapRowToUserPrivate(results);
+            User user = mapRowToUser(results);
+            user.setPassword(null);
             users.add(user);
         }
         return users;

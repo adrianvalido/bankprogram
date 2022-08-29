@@ -31,7 +31,7 @@ public class TransferService {
 
     public void getAllTransfers() throws AccountNotFoundException {
        Transfer[] output = null;
-       long userAccountId = restTemplate.exchange(BASE_URL + "/account/userid/" + currentUser.getUser().getId(), HttpMethod.GET, makeAuthEntity(), Long.class).getBody();
+/*       long userAccountId = restTemplate.exchange(BASE_URL + "/account/userid/" + currentUser.getUser().getId(), HttpMethod.GET, makeAuthEntity(), Long.class).getBody();*/
        try{
            output = restTemplate.exchange(BASE_URL + "/alltransfers", HttpMethod.GET, makeAuthEntity(), Transfer[].class).getBody();
            System.out.println("-------------------------------------------\r\n" +
@@ -147,10 +147,10 @@ public class TransferService {
                 } catch (NumberFormatException e){
                     System.out.println("Error when entering amount");
                 }
-                Transfer output = restTemplate.exchange(BASE_URL + "/transfer/create", HttpMethod.POST, makeAuthEntity(), Transfer.class).getBody();
+                Transfer output = restTemplate.exchange(BASE_URL + "/transfer/create", HttpMethod.POST, makeTransferEntity(transfer), Transfer.class).getBody();
                 if(output.getTransferStatusId() == 3){
                     System.out.println("Transfer failed");
-                } else if(output.getTransferStatusId() == 2){
+                } else {
                     System.out.println("Transfer completed successfully");
                 }
             }
@@ -160,7 +160,7 @@ public class TransferService {
 
     }
 
-    public Transfer createTransfer( BigDecimal amount, long accountTo)throws AccountNotFoundException{
+    public Transfer createTransfer( BigDecimal amount, long accountTo) throws AccountNotFoundException{
         return null;
     }
 

@@ -141,7 +141,8 @@ public class JdbcTransferDao implements TransferDao {
         if(currentAccountId != accountTo) {
             String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, " +
                     "account_from, account_to, amount) VALUES (2, 2, ?, ?, ?) returning transfer_id;";
-            long tranId = jdbcTemplate.queryForObject(sql, Long.class, currentAccountId, accountTo, amount);
+/*            long tranId = jdbcTemplate.queryForObject(sql, Long.class, currentAccountId, accountTo, amount);*/
+            long tranId = jdbcTemplate.update(sql, currentAccountId, accountTo, amount);
 
             String sqlMap = "SELECT transfer_id, transfer_type_id, transfer_status_id, " +
                     "account_from, account_to, (select username from tenmo_user join account using(user_id) where account_id = ?) " +
