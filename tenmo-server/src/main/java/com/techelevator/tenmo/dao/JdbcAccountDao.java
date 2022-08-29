@@ -50,12 +50,6 @@ public class JdbcAccountDao implements AccountDao {
         }
         throw new AccountNotFoundException();
     }
-    @Override
-    public Long getAccountIdByUserId(Long userId) throws AccountNotFoundException{
-        String sql = "SELECT account_id FROM account WHERE user_id = ? returning account_id;";
-        long accountId = jdbcTemplate.queryForObject(sql, Long.class, userId);
-        return accountId;
-    }
 
  /*   @Override
     public BigDecimal getBalanceByUserId(long userId) throws AccountNotFoundException {
@@ -115,6 +109,31 @@ public class JdbcAccountDao implements AccountDao {
         String sqlString = "UPDATE accounts SET balance = ? WHERE user_id = ?";
         jdbcTemplate.update(sqlString, account.getBalance().subtract(amountSubtracted) , id);
         return account.getBalance();
+    }
+
+    @Override
+    public Account getAccountByAccountId(long accountId){
+        String sql = "Select account_id, user_id, balance " +
+        "from account where account_id = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId);
+        if(results.next()){
+            Account account = mapRowToAccount(results);
+            account.setBalance(null);
+            return account;
+        }
+        return null;
+    }
+
+    @Override
+    public long getAccountIdByUserId(long userId){
+        String sql = "Select account_id, user_id, balance " +
+                "from account where user_id = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
+        if(results.next()){
+            Account account = mapRowToAccount(results);
+            return account.getAccountId();
+        }
+        return -1;
     }
 
 

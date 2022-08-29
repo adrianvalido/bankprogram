@@ -144,13 +144,12 @@ public class JdbcTransferDao implements TransferDao {
             long tranId = jdbcTemplate.queryForObject(sql, Long.class, currentAccountId, accountTo, amount);
 
             String sqlMap = "SELECT transfer_id, transfer_type_id, transfer_status_id, " +
-                    "account_from, account_to, a.user_id as user_id_from, tu.user_id as user_id_to, amount " +
-                    "FROM transfer t " +
-                    "JOIN account a ON t.account_from = a.account_id " +
-                    "JOIN tenmo_user tu using(user_id) " +
-                    "WHERE a.user_id = (SELECT user_id from account where account_id = ?) " +
-                    "AND tu.user_id= (SELECT user_id from account where account_id = ?) " +
-                    "AND transfer_id = ?;";
+                    "account_from, account_to, (select username from tenmo_user join account using(user_id) where account_id = ?) " +
+            "as username_from, (select username from tenmo_user join account using(user_id) where account_id = ?) " +
+            "as username_to, amount FROM transfer t " +
+            "JOIN account a ON t.account_from = a.account_id " +
+            "JOIN tenmo_user tu using(user_id) " +
+                    "WHERE transfer_id = ?;";
             SqlRowSet results = jdbcTemplate.queryForRowSet(sqlMap, currentAccountId, accountTo, tranId);
             if (results.next()) {
                 return mapRowToCreateTransfer(results);
@@ -207,8 +206,8 @@ public class JdbcTransferDao implements TransferDao {
         transfer.setTransferStatusId(results.getLong("transfer_status_id"));
         transfer.setAccountFrom(results.getLong("account_from"));
         transfer.setAccountTo(results.getLong("account_to"));
-        transfer.setUserIdFrom(results.getLong("user_id_from"));
-        transfer.setUserIdTo(results.getLong("user_id_to"));
+        transfer.setUserNameFrom(results.getString("username_from"));
+        transfer.setUserNameTo(results.getString("username_to"));
         transfer.setAmount(results.getBigDecimal("amount"));
         return transfer;
     }

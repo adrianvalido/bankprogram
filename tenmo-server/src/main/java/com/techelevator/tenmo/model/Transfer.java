@@ -15,10 +15,10 @@ public class Transfer {
     @NotNull(message = "Account To field cannot be empty")
     private long accountTo;
     private BigDecimal amount;
-    @NotNull(message = "UserIdFrom field cannot be empty")
-    private long userIdFrom;
-    @NotNull(message = "UserIdTo field cannot be empty")
-    private long userIdTo;
+    @NotNull(message = "Username from field cannot be empty")
+    private String userNameFrom;
+    @NotNull(message = "Username to field cannot be empty")
+    private String userNameTo;
 
     public Transfer(long transferId, long accountFrom, long accountTo, BigDecimal amount) {
         this.transferId = transferId;
@@ -74,19 +74,19 @@ public class Transfer {
         this.transferStatusId = transferStatusId;
     }
 
-    public long getUserIdFrom() {
-        return userIdFrom;
+    public String getUserNameFrom() {
+        return userNameFrom;
     }
 
-    public void setUserIdFrom(long userIdFrom) {
-        this.userIdFrom = userIdFrom;
+    public void setUserNameFrom(String userNameFrom) {
+        this.userNameFrom = userNameFrom;
     }
 
-    public long getUserIdTo() {
-        return userIdTo;
+    public String getUserNameTo() {
+        return userNameTo;
     }
 
-    public void setUserIdTo(long userIdTo) {
-        this.userIdTo = userIdTo;
+    public void setUserNameTo(String userNameTo) {
+        this.userNameTo = userNameTo;
     }
 }

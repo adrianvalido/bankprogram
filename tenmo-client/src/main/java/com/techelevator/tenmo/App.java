@@ -113,8 +113,7 @@ public class App {
 	}
 
 	private void sendBucks() throws AccountNotFoundException {
-		transferService.sendBucks(transferService.createTransfer( consoleService.promptForBigDecimal("Please enter a decimal amount to send."),
-                consoleService.promptForInt("Please enter the Account Id of the user you want to send to.")));
+        transferService.sendBucks();
 
 		
 	}

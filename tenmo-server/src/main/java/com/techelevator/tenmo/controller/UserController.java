@@ -1,13 +1,11 @@
 package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.UserDao;
+import com.techelevator.tenmo.model.Account;
 import com.techelevator.tenmo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,4 +21,8 @@ public class UserController {
     public List<String> findAllPrivate() {
         return dao.findAllPrivate();
     }
+
+    @RequestMapping(path = "/account/{accountId}", method = RequestMethod.GET)
+    public String getUsernameByAccountId(@PathVariable long accountId){return dao.getUsernameByAccountId(accountId);}
+
 }

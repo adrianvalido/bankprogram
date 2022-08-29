@@ -91,6 +91,17 @@ public class JdbcUserDao implements UserDao {
         return true;
     }
 
+    public String getUsernameByAccountId(long accountId){
+        String sql = "Select user_id, username, password_hash from tenmo_user " +
+        "join account using(user_id) where account_id = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId);
+        if(results.next()){
+            User user = mapRowToUser(results);
+            return user.getUsername();
+        }
+        return null;
+    }
+
     private User mapRowToUser(SqlRowSet rs) {
         User user = new User();
         user.setId(rs.getLong("user_id"));
