@@ -35,7 +35,7 @@ public class TransferService {
        try{
            output = restTemplate.exchange(BASE_URL + "/transfer/alltransfers", HttpMethod.GET, makeAuthEntity(), Transfer[].class).getBody();
            System.out.println("-------------------------------------------\r\n" +
-                   "Pending Transfers\r\n" +
+                   "Transfers\r\n" +
                    "ID          From/To                 Amount\r\n" +
                    "-------------------------------------------\r\n");
            String fromOrTo = "";
