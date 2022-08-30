@@ -18,9 +18,9 @@ public interface TransferDao {
 
     public Transfer getTransferById(long transferId);
 
-    public boolean sendBucks(Transfer transfer, Principal principal) throws AccountNotFoundException;
+    /*public boolean sendBucks(Transfer transfer, Principal principal) throws AccountNotFoundException;*/
 
-    public Transfer createTransfer(Principal principal, BigDecimal amount, long accountTo) throws AccountNotFoundException;
+    public String createTransfer(Principal principal, BigDecimal amount, long accountTo) throws AccountNotFoundException;
 
     public List<Transfer> getAllTransfersByType(long transferTypeId);
 

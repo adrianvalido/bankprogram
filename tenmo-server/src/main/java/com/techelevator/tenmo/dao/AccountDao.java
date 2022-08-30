@@ -20,7 +20,9 @@ public interface AccountDao {
 
     BigDecimal subtractFromBalance(BigDecimal amountSubtracted, long id) throws AccountNotFoundException;
 
-    Account getAccountByAccountId(long accountId);
+    Account getAccountByAccountIdPrivate(long accountId);
+
+    Account getAccountByAccountIdPublic(long accountId);
 
     long getAccountIdByUserId(long userId);
 

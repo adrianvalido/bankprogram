@@ -97,12 +97,12 @@ public class JdbcTransferDao implements TransferDao {
         return null;
     }
 
-    @Override
+  /*  @Override
     public boolean sendBucks(Transfer transfer, Principal principal) throws AccountNotFoundException {
 //    public Transfer sendBucks(Principal principal, BigDecimal amountSent, long accountTo) throws AccountNotFoundException {
 //        JdbcAccountDao jdbcAccountDao = new JdbcAccountDao();
 //        long currentUserId = jdbcAccountDao.getCurrentUserId(principal);
-        /*AccountDao dao = new JdbcAccountDao();*/
+        *//*AccountDao dao = new JdbcAccountDao();*//*
         BigDecimal currentBalance = dao.getBalanceByUserId(dao.getCurrentUserId(principal)).getBalance();
         BigDecimal zero = BigDecimal.valueOf(0.00);
         if (transfer.getAccountFrom() != transfer.getAccountTo()) {
@@ -132,19 +132,21 @@ public class JdbcTransferDao implements TransferDao {
         }
         transfer.setTransferStatusId(3);
         return false;
-    }
+    }*/
 
     @Override
-    public Transfer createTransfer(Principal principal, BigDecimal amount, long accountTo) throws AccountNotFoundException {
-        JdbcAccountDao jdbcAccountDao = new JdbcAccountDao();
-        long currentAccountId = jdbcAccountDao.getAccountIdByUserId(jdbcAccountDao.getCurrentUserId(principal));
-        if(currentAccountId != accountTo) {
+    public String createTransfer(Principal principal, BigDecimal amount, long accountTo) throws AccountNotFoundException {
+        long currentAccountId = dao.getAccountIdByUserId(dao.getCurrentUserId(principal));
+        if (currentAccountId == accountTo) {
+            return "You cannot send money to yourself.";
+        }
+        if (amount.compareTo(dao.getBalanceByUserId(dao.getCurrentUserId(principal)).getBalance()) == -1 && amount.compareTo(new BigDecimal(0)) == 1) {
             String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, " +
-                    "account_from, account_to, amount) VALUES (2, 2, ?, ?, ?) returning transfer_id;";
-/*            long tranId = jdbcTemplate.queryForObject(sql, Long.class, currentAccountId, accountTo, amount);*/
-            long tranId = jdbcTemplate.update(sql, currentAccountId, accountTo, amount);
+                    "account_from, account_to, amount) VALUES (2, 2, ?, ?, ?);";
+            /*            long tranId = jdbcTemplate.queryForObject(sql, Long.class, currentAccountId, accountTo, amount);*/
+            jdbcTemplate.update(sql, currentAccountId, accountTo, amount);
 
-            String sqlMap = "SELECT transfer_id, transfer_type_id, transfer_status_id, " +
+            /*String sqlMap = "SELECT transfer_id, transfer_type_id, transfer_status_id, " +
                     "account_from, account_to, (select username from tenmo_user join account using(user_id) where account_id = ?) " +
             "as username_from, (select username from tenmo_user join account using(user_id) where account_id = ?) " +
             "as username_to, amount FROM transfer t " +
@@ -152,11 +154,15 @@ public class JdbcTransferDao implements TransferDao {
             "JOIN tenmo_user tu using(user_id) " +
                     "WHERE transfer_id = ?;";
             SqlRowSet results = jdbcTemplate.queryForRowSet(sqlMap, currentAccountId, accountTo, tranId);
-            if (results.next()) {
-                return mapRowToCreateTransfer(results);
-            }
+            if (results.next()) {*/
+            dao.subtractFromBalance(amount, currentAccountId);
+            dao.addToBalance(amount, accountTo);
+            return "Transfer completed successfully!";
+
+        } else {
+
+            return "Transfer failed!";
         }
-        return null;
     }
 
     @Override

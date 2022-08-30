@@ -98,21 +98,21 @@ public class JdbcAccountDao implements AccountDao {
     }*/
     @Override
     public BigDecimal addToBalance(BigDecimal amountAdded, long id) throws AccountNotFoundException {
-        Account account = getBalanceByUserId(id);
-        String sqlString = "UPDATE account SET balance = ? WHERE user_id = ?";
+        Account account = getAccountByAccountIdPublic(id);
+        String sqlString = "UPDATE account SET balance = ? WHERE account_id = ?";
         jdbcTemplate.update(sqlString, account.getBalance().add(amountAdded) , id);
         return account.getBalance();
     }
     @Override
     public BigDecimal subtractFromBalance(BigDecimal amountSubtracted, long id) throws AccountNotFoundException {
-        Account account = getBalanceByUserId(id);
-        String sqlString = "UPDATE accounts SET balance = ? WHERE user_id = ?";
+        Account account = getAccountByAccountIdPublic(id);
+        String sqlString = "UPDATE account SET balance = ? WHERE account_id = ?";
         jdbcTemplate.update(sqlString, account.getBalance().subtract(amountSubtracted) , id);
         return account.getBalance();
     }
 
     @Override
-    public Account getAccountByAccountId(long accountId){
+    public Account getAccountByAccountIdPrivate(long accountId){
         String sql = "Select account_id, user_id, balance " +
         "from account where account_id = ?;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId);
@@ -125,15 +125,24 @@ public class JdbcAccountDao implements AccountDao {
     }
 
     @Override
-    public long getAccountIdByUserId(long userId){
+    public Account getAccountByAccountIdPublic(long accountId){
         String sql = "Select account_id, user_id, balance " +
-                "from account where user_id = ?;";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userId);
+                "from account where account_id = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId);
         if(results.next()){
             Account account = mapRowToAccount(results);
-            return account.getAccountId();
+            return account;
         }
-        return -1;
+        return null;
+    }
+
+    @Override
+    public long getAccountIdByUserId(long userId){
+        String sql = "Select account_id " +
+                "from account where user_id = ?;";
+
+        long results = jdbcTemplate.queryForObject(sql, Long.class, userId);
+        return results;
     }
 
 

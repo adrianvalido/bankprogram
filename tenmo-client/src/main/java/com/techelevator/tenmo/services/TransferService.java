@@ -33,7 +33,7 @@ public class TransferService {
        Transfer[] output = null;
 /*       long userAccountId = restTemplate.exchange(BASE_URL + "/account/userid/" + currentUser.getUser().getId(), HttpMethod.GET, makeAuthEntity(), Long.class).getBody();*/
        try{
-           output = restTemplate.exchange(BASE_URL + "/alltransfers", HttpMethod.GET, makeAuthEntity(), Transfer[].class).getBody();
+           output = restTemplate.exchange(BASE_URL + "/transfer/alltransfers", HttpMethod.GET, makeAuthEntity(), Transfer[].class).getBody();
            System.out.println("-------------------------------------------\r\n" +
                    "Pending Transfers\r\n" +
                    "ID          From/To                 Amount\r\n" +
@@ -43,15 +43,15 @@ public class TransferService {
            for(Transfer i: output){
                if(currentUser.getUser().getId() == i.getAccountFrom()){
                    fromOrTo = "From: ";
-                   long fromAccount = i.getAccountFrom();
+                   /*long fromAccount = i.getAccountFrom();
                    Account account = restTemplate.exchange(BASE_URL + "/account/" + i.getAccountFrom(), HttpMethod.GET, makeAuthEntity(), Account.class).getBody();
-                   long fromId = account.getUserId();
+                   long fromId = account.getUserId();*/
                    userName = restTemplate.exchange(BASE_URL + "/user/account/" + i.getAccountFrom(), HttpMethod.GET, makeAuthEntity(), String.class).getBody();
                } else{
                    fromOrTo = "To: ";
-                   long toAccount = i.getAccountTo();
+                   /*long toAccount = i.getAccountTo();
                    Account account = restTemplate.exchange(BASE_URL + "/account/" + i.getAccountTo(), HttpMethod.GET, makeAuthEntity(), Account.class).getBody();
-                   long toId = account.getUserId();
+                   long toId = account.getUserId();*/
                    userName = restTemplate.exchange(BASE_URL + "/user/account/" + i.getAccountTo(), HttpMethod.GET, makeAuthEntity(), String.class).getBody();
                }
                System.out.println(i.getTransferId() +"\t\t" + fromOrTo + userName + "\t\t\t$" + i.getAmount());
@@ -87,15 +87,15 @@ public class TransferService {
                                status= "Rejected";
                                break;
                        }
-                       long fromAccount = temp.getAccountFrom();
-                       Account senderAccount = restTemplate.exchange(BASE_URL + "/account/" + fromAccount, HttpMethod.GET, makeAuthEntity(), Account.class).getBody();
-                       long fromId = senderAccount.getUserId();
-                       userFrom = restTemplate.exchange(BASE_URL + "/user/account/" + fromId, HttpMethod.GET, makeAuthEntity(), String.class).getBody();
+                       /*long fromAccount = temp.getAccountFrom();
+                      *//* *//**//*Account senderAccount = restTemplate.exchange(BASE_URL + "/account/" + fromAccount, HttpMethod.GET, makeAuthEntity(), Account.class).getBody();*//**//*
+                       long fromId = senderAccount.getUserId();*/
+                       userFrom = restTemplate.exchange(BASE_URL + "/user/account/" + temp.getAccountFrom(), HttpMethod.GET, makeAuthEntity(), String.class).getBody();
 
-                       long toAccount = temp.getAccountTo();
+                       /*long toAccount = temp.getAccountTo();
                        Account receiverAccount = restTemplate.exchange(BASE_URL + "/account/" + toAccount, HttpMethod.GET, makeAuthEntity(), Account.class).getBody();
-                       long toId = receiverAccount.getUserId();
-                       userTo = restTemplate.exchange(BASE_URL + "/user/account/" + toId, HttpMethod.GET, makeAuthEntity(), String.class).getBody();
+                       long toId = receiverAccount.getUserId();*/
+                       userTo = restTemplate.exchange(BASE_URL + "/user/account/" + temp.getAccountTo(), HttpMethod.GET, makeAuthEntity(), String.class).getBody();
 
                        temp.setUserNameFrom(userFrom);
                        temp.setUserNameTo(userTo);
@@ -103,8 +103,8 @@ public class TransferService {
                                "Transfer Details\r\n" +
                                "--------------------------------------------\r\n" +
                                " Id: "+ temp.getTransferId() + "\r\n" +
-                               " From: " + temp.getUserNameFrom() + "\r\n" +
-                               " To: " + temp.getUserNameTo() + "\r\n" +
+                               " From: " + userFrom + "\r\n" +
+                               " To: " + userTo + "\r\n" +
                                " Type: " + type + "\r\n" +
                                " Status: " + status + "\r\n" +
                                " Amount: $" + temp.getAmount());
@@ -147,12 +147,8 @@ public class TransferService {
                 } catch (NumberFormatException e){
                     System.out.println("Error when entering amount");
                 }
-                Transfer output = restTemplate.exchange(BASE_URL + "/transfer/create", HttpMethod.POST, makeTransferEntity(transfer), Transfer.class).getBody();
-                if(output.getTransferStatusId() == 3){
-                    System.out.println("Transfer failed");
-                } else {
-                    System.out.println("Transfer completed successfully");
-                }
+                String output = restTemplate.exchange(BASE_URL + "/transfer/create", HttpMethod.POST, makeTransferEntity(transfer), String.class).getBody();
+                System.out.println(output);
             }
         }catch (Exception e){
             System.out.println("Bad input");

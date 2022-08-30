@@ -109,7 +109,7 @@ public class App {
 	}
 
 	private void viewPendingRequests() {
-		// TODO Auto-generated method stub
+        System.out.println("This feature is under construction!");
 		
 	}
 
@@ -121,7 +121,7 @@ public class App {
 	}
 
 	private void requestBucks() {
-		// TODO Auto-generated method stub
+        System.out.println("This feature is under construction!");
 		
 	}
 }

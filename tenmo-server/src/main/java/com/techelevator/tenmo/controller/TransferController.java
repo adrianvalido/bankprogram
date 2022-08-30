@@ -21,11 +21,11 @@ public class TransferController {
     @Autowired
     private TransferDao dao;
 
-    @RequestMapping(path = "/sendbucks", method = RequestMethod.POST)
+   /* @RequestMapping(path = "/sendbucks", method = RequestMethod.POST)
     public Transfer sendBucksPost(@RequestBody Transfer transfer, Principal principal) throws AccountNotFoundException {
         dao.sendBucks(transfer, principal);
         return transfer;
-    }
+    }*/
 
     @RequestMapping(path = "/alltransfers", method = RequestMethod.GET)
     public List<Transfer> getAllTransfers(Principal principal) throws AccountNotFoundException {
@@ -38,14 +38,10 @@ public class TransferController {
     }
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
-    /*public Transfer createTransfer(Principal principal, BigDecimal amount, long accountTo) throws AccountNotFoundException{*/
-    public Transfer createTransfer(Principal principal, @RequestBody Transfer transfer) throws AccountNotFoundException{
-        Transfer temp = dao.createTransfer(principal, transfer.getAmount(), transfer.getAccountTo());
-        if (dao.sendBucks(temp, principal)) {
-            return temp;
-        } else {
-            return null;
-        }
+    public String createTransfer(@RequestBody Transfer transfer, Principal principal) throws AccountNotFoundException{
+    /*public Boolean createTransfer(Principal principal, @RequestBody Transfer transfer) throws AccountNotFoundException{*/
+        String result = dao.createTransfer(principal, transfer.getAmount(), transfer.getAccountTo());
+        return result;
     }
 
 

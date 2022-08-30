@@ -33,7 +33,7 @@ public class AccountController {
     }
 
     @RequestMapping(path = "/{accountId}", method = RequestMethod.GET)
-    public Account getAccountByAccountId(@PathVariable long accountId){return dao.getAccountByAccountId(accountId);}
+    public Account getAccountByAccountId(@PathVariable long accountId){return dao.getAccountByAccountIdPrivate(accountId);}
 
     @RequestMapping(path = "/userid/{userId}", method = RequestMethod.GET)
     public long getAccountIdByUserId(@PathVariable long userId){return dao.getAccountIdByUserId(userId);}
