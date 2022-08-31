@@ -41,7 +41,8 @@ public class TransferService {
            String fromOrTo = "";
            String userName = "";
            for(Transfer i: output){
-               if(currentUser.getUser().getId() == i.getAccountFrom()){
+               Account tempAccount = restTemplate.exchange(BASE_URL + "/account/" + i.getAccountFrom(), HttpMethod.GET, makeAuthEntity(), Account.class).getBody();
+               if(currentUser.getUser().getId() == tempAccount.getUserId()){
                    fromOrTo = "From: ";
                    /*long fromAccount = i.getAccountFrom();
                    Account account = restTemplate.exchange(BASE_URL + "/account/" + i.getAccountFrom(), HttpMethod.GET, makeAuthEntity(), Account.class).getBody();
