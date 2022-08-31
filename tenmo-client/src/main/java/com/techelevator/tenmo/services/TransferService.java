@@ -43,17 +43,17 @@ public class TransferService {
            for(Transfer i: output){
                 Account tempAccount = restTemplate.exchange(BASE_URL + "/account/" + i.getAccountFrom(), HttpMethod.GET, makeAuthEntity(), Account.class).getBody();
                if(currentUser.getUser().getId() == tempAccount.getUserId()){
-                   fromOrTo = "From: ";
+                   fromOrTo = "To: ";
                    /*long fromAccount = i.getAccountFrom();
                    Account account = restTemplate.exchange(BASE_URL + "/account/" + i.getAccountFrom(), HttpMethod.GET, makeAuthEntity(), Account.class).getBody();
                    long fromId = account.getUserId();*/
-                   userName = restTemplate.exchange(BASE_URL + "/user/account/" + i.getAccountFrom(), HttpMethod.GET, makeAuthEntity(), String.class).getBody();
+                   userName = restTemplate.exchange(BASE_URL + "/user/account/" + i.getAccountTo(), HttpMethod.GET, makeAuthEntity(), String.class).getBody();
                } else{
-                   fromOrTo = "To: ";
+                   fromOrTo = "From : ";
                    /*long toAccount = i.getAccountTo();
                    Account account = restTemplate.exchange(BASE_URL + "/account/" + i.getAccountTo(), HttpMethod.GET, makeAuthEntity(), Account.class).getBody();
                    long toId = account.getUserId();*/
-                   userName = restTemplate.exchange(BASE_URL + "/user/account/" + i.getAccountTo(), HttpMethod.GET, makeAuthEntity(), String.class).getBody();
+                   userName = restTemplate.exchange(BASE_URL + "/user/account/" + i.getAccountFrom(), HttpMethod.GET, makeAuthEntity(), String.class).getBody();
                }
                System.out.println(i.getTransferId() +"\t\t" + fromOrTo + userName + "\t\t\t$" + i.getAmount());
            }
