@@ -88,7 +88,8 @@ public class App {
             } else if (menuSelection == 5) {
                 requestBucks();
             } else if (menuSelection == 0) {
-                continue;
+                currentUser = null;
+                run();
             } else {
                 System.out.println("Invalid Selection");
             }
